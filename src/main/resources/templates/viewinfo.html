@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Account Info</title>
+	<link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+	<div th:replace="~{fragments :: header}"></div>
+
+	<br><br>
+	Name: <span th:text="${customer.name}"></span><br><br>
+	Email: <span th:text="${customer.email}"></span><br><br>
+	Username: <span th:text="${customer.username}"></span><br><br>
+	Birthday: <span th:text="${customer.birthday}"></span><br><br>
+	Gender: <span th:text="${customer.gender}"></span><br><br>
+
+	<p>
+		<a th:href="@{/profile/edit}">Update Info</a>
+		<br>
+		<a th:href="@{/main}">Back to the Main Page</a>
+	</p>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div id="wrapper" th:fragment="header">
+	<div id="header">
+		<h2>Capital 11 Bank</h2>
+	</div>
+</div>
+
+<th:block th:fragment="alerts">
+	<p class="message" th:if="${message}" th:text="${message}"></p>
+	<p class="error" th:if="${error}" th:text="${error}"></p>
+</th:block>
+
+</body>
+</html>

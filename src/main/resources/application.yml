@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: capital11
+
+  # When run from the project root (e.g. ./mvnw spring-boot:run), spring-boot-docker-compose
+  # starts docker-compose.yml and points the datasource at the mysql service, overriding the
+  # values below. They are the fallback when compose support is off (e.g. a packaged jar).
+  docker:
+    compose:
+      file: compose.yaml
+      lifecycle-management: start-only
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/capital_11}
+    username: ${DB_USERNAME:capital11}
+    password: ${DB_PASSWORD:capital11}
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      # Schema is owned by docker/mysql/init/01-schema.sql; Hibernate only checks it matches.
+      ddl-auto: validate
+      naming:
+        # Keep legacy column names such as dateTrans exactly as written in @Column.
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+  thymeleaf:
+    cache: false
+
+server:
+  port: 8080
+  servlet:
+    context-path: /capital11
+    session:
+      tracking-modes: cookie
+
+springdoc:
+  # Only the JSON API is documented; the Thymeleaf pages are not.
+  paths-to-match: /api/**
+  swagger-ui:
+    operations-sorter: method
+    tags-sorter: alpha

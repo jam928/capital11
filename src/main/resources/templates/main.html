@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Main</title>
+	<link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+	<div th:replace="~{fragments :: header}"></div>
+
+	<div id="container">
+		<div id="content">
+
+			<input type="button" value="Withdraw" class="withdrawl-button"
+				th:attr="onclick=|window.location.href='@{/withdraw}'|">
+			<input type="button" value="Deposit" class="deposit-button"
+				th:attr="onclick=|window.location.href='@{/deposit}'|">
+			<input type="button" value="View/Update Info" class="viewinfo-button"
+				th:attr="onclick=|window.location.href='@{/profile}'|">
+
+			<th:block th:replace="~{fragments :: alerts}"></th:block>
+
+			<h3>Current Balance: $<span th:text="${#numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT')}">0.00</span></h3>
+			<h3>Welcome: <span th:text="${customer.name}">Name</span></h3>
+
+			<table>
+				<tr>
+					<th>Date</th>
+					<th>Transaction Type</th>
+					<th>Amount</th>
+				</tr>
+				<tr th:each="tx : ${transactions}">
+					<td th:text="${#temporals.format(tx.date, 'MM/dd/yyyy HH:mm:ss')}">01/01/2020 00:00:00</td>
+					<td th:text="${tx.type.label}">Deposit</td>
+					<td th:text="|$${#numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')}|">$0.00</td>
+				</tr>
+				<tr th:if="${#lists.isEmpty(transactions)}">
+					<td colspan="3">No transactions yet.</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<p>
+		<a th:href="@{/logout}">Logout</a>
+	</p>
+</body>
+</html>

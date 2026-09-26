@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Update Info</title>
+	<link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+	<link type="text/css" rel="stylesheet" th:href="@{/css/update.css}">
+</head>
+<body>
+
+	<div th:replace="~{fragments :: header}"></div>
+
+	<div id="container">
+		<h3>Update User Info</h3>
+
+		<th:block th:replace="~{fragments :: alerts}"></th:block>
+
+		<form th:action="@{/profile/edit}" method="post">
+			<table>
+				<tbody>
+					<tr>
+						<td><label for="email">Email: </label></td>
+						<td><input type="email" id="email" name="email" th:value="${customer.email}" required></td>
+					</tr>
+					<tr>
+						<td><label for="username">Username: </label></td>
+						<td><input type="text" id="username" name="username" th:value="${customer.username}" required></td>
+					</tr>
+					<tr>
+						<td><label for="password">Password: </label></td>
+						<td><input type="password" id="password" name="password" placeholder="Leave blank to keep current"></td>
+					</tr>
+					<tr>
+						<td><label></label></td>
+						<td><input type="submit" value="Update" class="update"></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+
+		<p>
+			<a th:href="@{/main}">Back to the main page</a>
+		</p>
+	</div>
+</body>
+</html>

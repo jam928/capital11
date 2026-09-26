@@ -1,0 +1,47 @@
+services:
+  mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: capital_11
+      MYSQL_USER: capital11
+      MYSQL_PASSWORD: capital11
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # Behind a profile so ./mvnw spring-boot:run (which starts this file) only brings up mysql.
+  # Run the whole stack with: docker compose --profile app up
+  app:
+    profiles: [app]
+    image: maven:3.9-eclipse-temurin-21
+    working_dir: /workspace
+    command: mvn spring-boot:run
+    environment:
+      # Compose support would try to run docker compose from inside this container.
+      SPRING_DOCKER_COMPOSE_ENABLED: "false"
+      DB_URL: jdbc:mysql://mysql:3306/capital_11
+      DB_USERNAME: capital11
+      DB_PASSWORD: capital11
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    volumes:
+      - .:/workspace
+      # Keep build output and the Maven cache out of the host checkout and across restarts.
+      - app-target:/workspace/target
+      - maven-repo:/root/.m2
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mysql-data:
+  app-target:
+  maven-repo:

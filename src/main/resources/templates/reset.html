@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Reset Password</title>
+	<link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+	<link type="text/css" rel="stylesheet" th:href="@{/css/reset.css}">
+</head>
+<body>
+
+	<div th:replace="~{fragments :: header}"></div>
+
+	<div id="container">
+		<h3>Reset Password<span th:if="${username}" th:text="| for ${username}|"></span></h3>
+
+		<th:block th:replace="~{fragments :: alerts}"></th:block>
+
+		<form th:action="@{/reset-password}" method="post">
+			<table>
+				<tbody>
+					<tr>
+						<td><label for="password">New Password: </label></td>
+						<td><input type="password" id="password" name="password" required autofocus></td>
+					</tr>
+					<tr>
+						<td><label></label></td>
+						<td><input type="submit" value="Update" class="reset"></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+
+		<p>
+			<a th:href="@{/login}">Back to the login page</a>
+		</p>
+	</div>
+</body>
+</html>

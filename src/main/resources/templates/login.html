@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Login</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/login.css}">
+</head>
+<body>
+	<form id="login" th:action="@{/login}" method="post">
+		<h1>Login</h1>
+		<th:block th:replace="~{fragments :: alerts}"></th:block>
+		<fieldset id="inputs">
+			<input id="username" name="username" type="text" placeholder="Username" autofocus required>
+			<input id="password" name="password" type="password" placeholder="Password" required>
+		</fieldset>
+
+		<fieldset id="actions">
+			<input type="submit" id="submit" value="Login">
+			<a th:href="@{/forgot-password}">Forgot Your Password?</a><a th:href="@{/register}">Register</a>
+		</fieldset>
+	</form>
+</body>
+</html>

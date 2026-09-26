@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Deposit</title>
+	<link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
+	<link type="text/css" rel="stylesheet" th:href="@{/css/deposit.css}">
+</head>
+<body>
+
+	<div th:replace="~{fragments :: header}"></div>
+
+	<div id="container">
+		<h3>Deposit to your Bank Account</h3>
+
+		<th:block th:replace="~{fragments :: alerts}"></th:block>
+
+		<form th:action="@{/deposit}" method="post">
+			<table>
+				<tbody>
+					<tr>
+						<td><label for="amount">Amount: </label></td>
+						<td><input type="number" id="amount" name="amount" min="0.01" step="0.01" th:value="${param.amount}" required autofocus></td>
+					</tr>
+					<tr>
+						<td><label></label></td>
+						<td><input type="submit" value="Deposit" class="deposit"></td>
+					</tr>
+				</tbody>
+			</table>
+		</form>
+
+		<p>
+			<a th:href="@{/main}">Back to the main page</a>
+		</p>
+	</div>
+</body>
+</html>
