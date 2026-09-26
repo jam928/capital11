@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
-import com.capital11.api.ApiDtos.AccountResponse;
-import com.capital11.api.ApiDtos.AmountRequest;
-import com.capital11.api.ApiDtos.CustomerResponse;
-import com.capital11.api.ApiDtos.ProfileUpdateRequest;
-import com.capital11.api.ApiDtos.TransactionResponse;
+import com.capital11.mapper.DtoMapper;
+import com.capital11.dto.request.AmountRequest;
+import com.capital11.dto.request.ProfileUpdateRequest;
+import com.capital11.dto.response.AccountResponse;
+import com.capital11.dto.response.CustomerResponse;
+import com.capital11.dto.response.TransactionResponse;
 import com.capital11.service.BankService;
 import com.capital11.web.SessionKeys;
 
@@ -35,15 +36,17 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class MeApiController {
 
     private final BankService bankService;
+    private final DtoMapper mapper;
 
-    public MeApiController(BankService bankService) {
+    public MeApiController(BankService bankService, DtoMapper mapper) {
         this.bankService = bankService;
+        this.mapper = mapper;
     }
 
     @GetMapping
     @Operation(summary = "Get profile")
     public CustomerResponse profile(@Parameter(hidden = true) @SessionAttribute(SessionKeys.CUSTOMER_ID) int cid) {
-        return CustomerResponse.of(bankService.getCustomer(cid));
+        return mapper.toResponse(bankService.getCustomer(cid));
     }
 
     @PutMapping
@@ -52,20 +55,20 @@ public class MeApiController {
     public CustomerResponse updateProfile(@Parameter(hidden = true) @SessionAttribute(SessionKeys.CUSTOMER_ID) int cid,
                                           @Valid @RequestBody ProfileUpdateRequest request) {
         bankService.updateProfile(cid, request.email().trim(), request.username().trim(), request.password());
-        return CustomerResponse.of(bankService.getCustomer(cid));
+        return mapper.toResponse(bankService.getCustomer(cid));
     }
 
     @GetMapping("/account")
     @Operation(summary = "Get account and balance")
     public AccountResponse account(@Parameter(hidden = true) @SessionAttribute(SessionKeys.CUSTOMER_ID) int cid) {
-        return AccountResponse.of(bankService.getAccount(cid));
+        return mapper.toResponse(bankService.getAccount(cid));
     }
 
     @GetMapping("/transactions")
     @Operation(summary = "List transactions, newest first")
     public List<TransactionResponse> transactions(
             @Parameter(hidden = true) @SessionAttribute(SessionKeys.CUSTOMER_ID) int cid) {
-        return bankService.listTransactions(cid).stream().map(TransactionResponse::of).toList();
+        return mapper.toTransactionResponses(bankService.listTransactions(cid));
     }
 
     @PostMapping("/deposits")
@@ -74,7 +77,7 @@ public class MeApiController {
     public AccountResponse deposit(@Parameter(hidden = true) @SessionAttribute(SessionKeys.CUSTOMER_ID) int cid,
                                    @Valid @RequestBody AmountRequest request) {
         bankService.deposit(cid, request.amount());
-        return AccountResponse.of(bankService.getAccount(cid));
+        return mapper.toResponse(bankService.getAccount(cid));
     }
 
     @PostMapping("/withdrawals")
@@ -83,6 +86,6 @@ public class MeApiController {
     public AccountResponse withdraw(@Parameter(hidden = true) @SessionAttribute(SessionKeys.CUSTOMER_ID) int cid,
                                     @Valid @RequestBody AmountRequest request) {
         bankService.withdraw(cid, request.amount());
-        return AccountResponse.of(bankService.getAccount(cid));
+        return mapper.toResponse(bankService.getAccount(cid));
     }
 }

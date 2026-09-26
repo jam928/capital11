@@ -1,37 +1,33 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-	<title>Deposit</title>
-	<link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
-	<link type="text/css" rel="stylesheet" th:href="@{/css/deposit.css}">
-</head>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head('Deposit')}"></head>
 <body>
+<header th:replace="~{fragments :: nav('deposit')}"></header>
 
-	<div th:replace="~{fragments :: header}"></div>
-
-	<div id="container">
-		<h3>Deposit to your Bank Account</h3>
+<main class="page page-narrow">
+	<section class="card">
+		<div class="card-header">
+			<h1>Deposit money</h1>
+			<p class="muted">Add funds to your account.</p>
+		</div>
 
 		<th:block th:replace="~{fragments :: alerts}"></th:block>
 
-		<form th:action="@{/deposit}" method="post">
-			<table>
-				<tbody>
-					<tr>
-						<td><label for="amount">Amount: </label></td>
-						<td><input type="number" id="amount" name="amount" min="0.01" step="0.01" th:value="${param.amount}" required autofocus></td>
-					</tr>
-					<tr>
-						<td><label></label></td>
-						<td><input type="submit" value="Deposit" class="deposit"></td>
-					</tr>
-				</tbody>
-			</table>
+		<form class="form" th:action="@{/deposit}" method="post">
+			<div class="field">
+				<label for="amount">Amount</label>
+				<div class="input-prefix">
+					<span aria-hidden="true">$</span>
+					<input type="number" id="amount" name="amount" min="0.01" step="0.01" inputmode="decimal"
+						placeholder="0.00" th:value="${param.amount}" required autofocus>
+				</div>
+			</div>
+			<div class="actions">
+				<button type="submit" class="btn">Deposit</button>
+				<a class="btn btn-secondary" th:href="@{/main}">Cancel</a>
+			</div>
 		</form>
-
-		<p>
-			<a th:href="@{/main}">Back to the main page</a>
-		</p>
-	</div>
+	</section>
+</main>
 </body>
 </html>

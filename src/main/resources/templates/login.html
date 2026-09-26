@@ -1,22 +1,38 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-	<title>Login</title>
-	<link rel="stylesheet" type="text/css" th:href="@{/css/login.css}">
-</head>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head('Log in')}"></head>
 <body>
-	<form id="login" th:action="@{/login}" method="post">
-		<h1>Login</h1>
-		<th:block th:replace="~{fragments :: alerts}"></th:block>
-		<fieldset id="inputs">
-			<input id="username" name="username" type="text" placeholder="Username" autofocus required>
-			<input id="password" name="password" type="password" placeholder="Password" required>
-		</fieldset>
+<div class="auth-theme"><button th:replace="~{fragments :: themeToggle}"></button></div>
+<main class="auth">
+	<div class="auth-card">
+		<a th:replace="~{fragments :: brand}"></a>
 
-		<fieldset id="actions">
-			<input type="submit" id="submit" value="Login">
-			<a th:href="@{/forgot-password}">Forgot Your Password?</a><a th:href="@{/register}">Register</a>
-		</fieldset>
-	</form>
+		<section class="card">
+			<div class="card-header">
+				<h1>Welcome back</h1>
+				<p class="muted">Log in to manage your account.</p>
+			</div>
+
+			<th:block th:replace="~{fragments :: alerts}"></th:block>
+
+			<form class="form" th:action="@{/login}" method="post">
+				<div class="field">
+					<label for="username">Username</label>
+					<input id="username" name="username" type="text" autocomplete="username" autofocus required>
+				</div>
+				<div class="field">
+					<div class="actions split">
+						<label for="password">Password</label>
+						<a class="hint" th:href="@{/forgot-password}">Forgot password?</a>
+					</div>
+					<input id="password" name="password" type="password" autocomplete="current-password" required>
+				</div>
+				<button type="submit" class="btn btn-block">Log in</button>
+			</form>
+		</section>
+
+		<p class="auth-footer">New to Capital 11? <a th:href="@{/register}">Create an account</a></p>
+	</div>
+</main>
 </body>
 </html>

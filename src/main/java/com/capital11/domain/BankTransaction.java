@@ -15,12 +15,22 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 /** A deposit or withdrawal against an account (legacy table name: transaction). */
 @Entity
 @Table(name = "transaction")
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class BankTransaction {
 
     @Id
@@ -46,31 +56,4 @@ public class BankTransaction {
 
     @Column(name = "dateTrans", nullable = false)
     private LocalDateTime date;
-
-    protected BankTransaction() {
-    }
-
-    public BankTransaction(TransactionType type, Account account, BigDecimal amount, LocalDateTime date) {
-        this.type = type;
-        this.account = account;
-        this.customer = account.getCustomer();
-        this.amount = amount;
-        this.date = date;
-    }
-
-    public Integer getTid() {
-        return tid;
-    }
-
-    public TransactionType getType() {
-        return type;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
 }

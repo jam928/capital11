@@ -1,47 +1,52 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-	<title>Main</title>
-	<link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
-</head>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head('Dashboard')}"></head>
 <body>
+<header th:replace="~{fragments :: nav('main')}"></header>
 
-	<div th:replace="~{fragments :: header}"></div>
-
-	<div id="container">
-		<div id="content">
-
-			<input type="button" value="Withdraw" class="withdrawl-button"
-				th:attr="onclick=|window.location.href='@{/withdraw}'|">
-			<input type="button" value="Deposit" class="deposit-button"
-				th:attr="onclick=|window.location.href='@{/deposit}'|">
-			<input type="button" value="View/Update Info" class="viewinfo-button"
-				th:attr="onclick=|window.location.href='@{/profile}'|">
-
-			<th:block th:replace="~{fragments :: alerts}"></th:block>
-
-			<h3>Current Balance: $<span th:text="${#numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT')}">0.00</span></h3>
-			<h3>Welcome: <span th:text="${customer.name}">Name</span></h3>
-
-			<table>
-				<tr>
-					<th>Date</th>
-					<th>Transaction Type</th>
-					<th>Amount</th>
-				</tr>
-				<tr th:each="tx : ${transactions}">
-					<td th:text="${#temporals.format(tx.date, 'MM/dd/yyyy HH:mm:ss')}">01/01/2020 00:00:00</td>
-					<td th:text="${tx.type.label}">Deposit</td>
-					<td th:text="|$${#numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')}|">$0.00</td>
-				</tr>
-				<tr th:if="${#lists.isEmpty(transactions)}">
-					<td colspan="3">No transactions yet.</td>
-				</tr>
-			</table>
-		</div>
+<main class="page">
+	<div class="page-header">
+		<h1>Hi, <span th:text="${customer.name}">Name</span></h1>
+		<p class="muted">Here's what's happening with your account.</p>
 	</div>
-	<p>
-		<a th:href="@{/logout}">Logout</a>
-	</p>
+
+	<th:block th:replace="~{fragments :: alerts}"></th:block>
+
+	<section class="hero" aria-label="Balance">
+		<div>
+			<p class="hero-label">Available balance</p>
+			<p class="hero-balance num" th:text="|$${#numbers.formatDecimal(account.balance, 1, 'COMMA', 2, 'POINT')}|">$0.00</p>
+		</div>
+		<div class="hero-meta">
+			<span th:text="|${account.type.label} account|">Checking account</span>
+			<span class="num" th:text="|No. ${account.acctNum}|">No. 1</span>
+		</div>
+		<div class="hero-actions">
+			<a class="btn" th:href="@{/deposit}">Deposit</a>
+			<a class="btn btn-ghost" th:href="@{/withdraw}">Withdraw</a>
+		</div>
+	</section>
+
+	<section class="card">
+		<div class="card-header">
+			<h2>Recent activity</h2>
+		</div>
+
+		<ul class="tx-list" th:unless="${#lists.isEmpty(transactions)}">
+			<li th:each="tx : ${transactions}" th:with="deposit=${tx.type.name() == 'DEPOSIT'}"
+				th:class="${deposit} ? 'tx tx-deposit' : 'tx tx-withdrawal'">
+				<span class="tx-icon" aria-hidden="true" th:text="${deposit} ? '+' : '−'">+</span>
+				<div>
+					<p class="tx-title" th:text="${tx.type.label}">Deposit</p>
+					<p class="tx-date" th:text="${#temporals.format(tx.date, 'MMM d, yyyy · h:mm a')}">Jan 1, 2026 · 9:00 AM</p>
+				</div>
+				<span class="tx-amount num"
+					th:text="|${deposit ? '+' : '−'}$${#numbers.formatDecimal(tx.amount, 1, 'COMMA', 2, 'POINT')}|">+$0.00</span>
+			</li>
+		</ul>
+
+		<p class="empty" th:if="${#lists.isEmpty(transactions)}">No transactions yet. Make your first deposit to get started.</p>
+	</section>
+</main>
 </body>
 </html>

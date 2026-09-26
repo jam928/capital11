@@ -33,14 +33,18 @@ public class BankService {
         this.transactions = transactions;
     }
 
-    public Customer register(String name, String email, String username, String password,
-                             String birthday, String gender, AccountType accountType) {
-        if (customers.existsByUsername(username)) {
+    /** Saves a new customer, assigning its cid, and opens their account. */
+    public Customer register(Customer newCustomer, AccountType accountType) {
+        if (customers.existsByUsername(newCustomer.getUsername())) {
             throw new BankException("Username is already taken.");
         }
-        Customer customer = customers.save(
-                new Customer(newCustomerId(), name, email, username, password, birthday, gender));
-        accounts.save(new Account(accountType, customer));
+        newCustomer.setCid(newCustomerId());
+        Customer customer = customers.save(newCustomer);
+        Account newAccount = Account.builder()
+                .acctType(accountType)
+                .customer(customer)
+                .build();
+        accounts.save(newAccount);
         return customer;
     }
 
@@ -78,7 +82,16 @@ public class BankService {
     public void deposit(int cid, BigDecimal amount) {
         Account account = lockAccount(cid, amount);
         account.setBalance(account.getBalance().add(amount));
-        transactions.save(new BankTransaction(TransactionType.DEPOSIT, account, amount, LocalDateTime.now()));
+        BankTransaction bankTransaction = BankTransaction
+                .builder()
+                .type(TransactionType.DEPOSIT)
+                .account(account)
+                .customer(account.getCustomer())
+                .amount(amount)
+                .date(LocalDateTime.now())
+                .build();
+        transactions.save(bankTransaction);
+
     }
 
     public void withdraw(int cid, BigDecimal amount) {
@@ -88,7 +101,15 @@ public class BankService {
             throw new BankException("Insufficient funds.");
         }
         account.setBalance(newBalance);
-        transactions.save(new BankTransaction(TransactionType.WITHDRAWAL, account, amount, LocalDateTime.now()));
+        BankTransaction bankTransaction = BankTransaction
+                .builder()
+                .type(TransactionType.WITHDRAWAL)
+                .account(account)
+                .customer(account.getCustomer())
+                .amount(amount)
+                .date(LocalDateTime.now())
+                .build();
+        transactions.save(bankTransaction);
     }
 
     /** Updates contact details; a blank password leaves the current password unchanged. */

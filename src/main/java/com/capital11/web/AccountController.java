@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.capital11.mapper.DtoMapper;
 import com.capital11.service.BankException;
 import com.capital11.service.BankService;
 
@@ -19,16 +20,18 @@ import com.capital11.service.BankService;
 public class AccountController {
 
     private final BankService bankService;
+    private final DtoMapper mapper;
 
-    public AccountController(BankService bankService) {
+    public AccountController(BankService bankService, DtoMapper mapper) {
         this.bankService = bankService;
+        this.mapper = mapper;
     }
 
     @GetMapping("/main")
     public String main(@SessionAttribute(SessionKeys.CUSTOMER_ID) int cid, Model model) {
-        model.addAttribute("customer", bankService.getCustomer(cid));
-        model.addAttribute("account", bankService.getAccount(cid));
-        model.addAttribute("transactions", bankService.listTransactions(cid));
+        model.addAttribute("customer", mapper.toResponse(bankService.getCustomer(cid)));
+        model.addAttribute("account", mapper.toResponse(bankService.getAccount(cid)));
+        model.addAttribute("transactions", mapper.toTransactionResponses(bankService.listTransactions(cid)));
         return "main";
     }
 
@@ -56,13 +59,13 @@ public class AccountController {
 
     @GetMapping("/profile")
     public String profile(@SessionAttribute(SessionKeys.CUSTOMER_ID) int cid, Model model) {
-        model.addAttribute("customer", bankService.getCustomer(cid));
+        model.addAttribute("customer", mapper.toResponse(bankService.getCustomer(cid)));
         return "viewinfo";
     }
 
     @GetMapping("/profile/edit")
     public String editProfilePage(@SessionAttribute(SessionKeys.CUSTOMER_ID) int cid, Model model) {
-        model.addAttribute("customer", bankService.getCustomer(cid));
+        model.addAttribute("customer", mapper.toResponse(bankService.getCustomer(cid)));
         return "update";
     }
 
@@ -73,7 +76,7 @@ public class AccountController {
         try {
             bankService.updateProfile(cid, email.trim(), username.trim(), password);
         } catch (BankException e) {
-            model.addAttribute("customer", bankService.getCustomer(cid));
+            model.addAttribute("customer", mapper.toResponse(bankService.getCustomer(cid)));
             model.addAttribute("error", e.getMessage());
             return "update";
         }

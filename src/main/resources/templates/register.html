@@ -1,95 +1,122 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-	<title>Capital 11 Bank</title>
-	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}">
-	<style>
-		body { background-color: #f1f1f1; }
-	</style>
-</head>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head('Create account')}"></head>
 <body>
-<h1 align="center">User Account Creation</h1>
+<div class="auth-theme"><button th:replace="~{fragments :: themeToggle}"></button></div>
+<main class="auth">
+	<div class="auth-card wide">
+		<a th:replace="~{fragments :: brand}"></a>
 
-<div class="form">
-	<form id="contactform" th:action="@{/register}" th:object="${form}" method="post">
+		<section class="card">
+			<div class="card-header">
+				<h1>Open an account</h1>
+				<p class="muted">It only takes a minute.</p>
+			</div>
 
-		<p class="contact"><label for="name">Name</label></p>
-		<input th:field="*{name}" placeholder="First and last name" required tabindex="1" type="text">
-		<span class="error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+			<form class="form" th:action="@{/register}" th:object="${form}" method="post">
+				<div class="field">
+					<label for="name">Full name</label>
+					<input th:field="*{name}" th:errorclass="is-invalid" type="text" autocomplete="name" required autofocus>
+					<span class="error-text" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+				</div>
 
-		<p class="contact"><label for="email">Email</label></p>
-		<input th:field="*{email}" placeholder="example@domain.com" required type="email">
-		<span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+				<div class="field">
+					<label for="email">Email</label>
+					<input th:field="*{email}" th:errorclass="is-invalid" type="email" autocomplete="email" placeholder="you@example.com" required>
+					<span class="error-text" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+				</div>
 
-		<p class="contact"><label for="username">Create a username</label></p>
-		<input th:field="*{username}" placeholder="username" required tabindex="2" type="text">
-		<span id="username-status"></span>
-		<span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
-		<br>
+				<div class="field">
+					<label for="username">Username</label>
+					<input th:field="*{username}" th:errorclass="is-invalid" type="text" autocomplete="username" required>
+					<span id="username-status" class="username-status" aria-live="polite"></span>
+					<span class="error-text" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+				</div>
 
-		<p class="contact"><label for="password">Create a password</label></p>
-		<input th:field="*{password}" type="password" required>
-		<span class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+				<div class="field-row">
+					<div class="field">
+						<label for="password">Password</label>
+						<input th:field="*{password}" th:errorclass="is-invalid" type="password" autocomplete="new-password" required>
+						<span class="error-text" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+					</div>
+					<div class="field">
+						<label for="confirmPassword">Confirm password</label>
+						<input th:field="*{confirmPassword}" type="password" autocomplete="new-password" required
+							th:classappend="${#fields.hasErrors('passwordConfirmed')} ? 'is-invalid'">
+						<span class="error-text" th:if="${#fields.hasErrors('passwordConfirmed')}" th:errors="*{passwordConfirmed}"></span>
+					</div>
+				</div>
 
-		<p class="contact"><label for="confirmPassword">Confirm your password</label></p>
-		<input th:field="*{confirmPassword}" type="password" required>
-		<span class="error" th:if="${#fields.hasErrors('passwordConfirmed')}" th:errors="*{passwordConfirmed}"></span>
+				<fieldset class="field fieldset">
+					<legend class="label">Birthday</legend>
+					<div class="field-row birthday">
+						<select th:field="*{birthMonth}" aria-label="Month" required
+							th:classappend="${#fields.hasErrors('birthMonth')} ? 'is-invalid'">
+							<option value="">Month</option>
+							<option value="1">January</option>
+							<option value="2">February</option>
+							<option value="3">March</option>
+							<option value="4">April</option>
+							<option value="5">May</option>
+							<option value="6">June</option>
+							<option value="7">July</option>
+							<option value="8">August</option>
+							<option value="9">September</option>
+							<option value="10">October</option>
+							<option value="11">November</option>
+							<option value="12">December</option>
+						</select>
+						<input th:field="*{birthDay}" type="text" inputmode="numeric" maxlength="2" placeholder="Day" aria-label="Day" required
+							th:classappend="${#fields.hasErrors('birthDay')} ? 'is-invalid'">
+						<input th:field="*{birthYear}" type="text" inputmode="numeric" maxlength="4" placeholder="Year" aria-label="Year" required
+							th:classappend="${#fields.hasErrors('birthYear')} ? 'is-invalid'">
+					</div>
+					<span class="error-text" th:if="${#fields.hasErrors('birthMonth') or #fields.hasErrors('birthDay') or #fields.hasErrors('birthYear')}">Enter a valid birthday</span>
+				</fieldset>
 
-		<fieldset>
-			<label>Birthday</label>
-			<label class="month">
-				<select class="select-style" th:field="*{birthMonth}" required>
-					<option value="">Month</option>
-					<option value="1">January</option>
-					<option value="2">February</option>
-					<option value="3">March</option>
-					<option value="4">April</option>
-					<option value="5">May</option>
-					<option value="6">June</option>
-					<option value="7">July</option>
-					<option value="8">August</option>
-					<option value="9">September</option>
-					<option value="10">October</option>
-					<option value="11">November</option>
-					<option value="12">December</option>
-				</select>
-			</label>
-			<label>Day <input class="birthday" th:field="*{birthDay}" maxlength="2" placeholder="Day" required></label>
-			<label>Year <input class="birthyear" th:field="*{birthYear}" maxlength="4" placeholder="Year" required></label>
-			<span class="error" th:if="${#fields.hasErrors('birthMonth') or #fields.hasErrors('birthDay') or #fields.hasErrors('birthYear')}">Enter a valid birthday</span>
-		</fieldset>
+				<div class="field-row">
+					<div class="field">
+						<label for="gender">Gender</label>
+						<select th:field="*{gender}" th:errorclass="is-invalid" required>
+							<option value="">Select…</option>
+							<option value="m">Male</option>
+							<option value="f">Female</option>
+							<option value="others">Other</option>
+						</select>
+						<span class="error-text" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></span>
+					</div>
+					<div class="field">
+						<label for="accountType">Account type</label>
+						<select th:field="*{accountType}">
+							<option th:each="type : ${accountTypes}" th:value="${type}" th:text="${type.label}">Checking</option>
+						</select>
+					</div>
+				</div>
 
-		Select Gender:
-		<select class="select-style gender" th:field="*{gender}" required>
-			<option value="">i am..</option>
-			<option value="m">Male</option>
-			<option value="f">Female</option>
-			<option value="others">Other</option>
-		</select>
-		<span class="error" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></span><br><br>
+				<button type="submit" class="btn btn-block">Create account</button>
+			</form>
+		</section>
 
-		Select Account Type:
-		<select class="select-style acct" th:field="*{accountType}">
-			<option th:each="type : ${accountTypes}" th:value="${type}" th:text="${type.label}">Checking</option>
-		</select><br><br>
-
-		<input class="buttom" id="submit" tabindex="5" value="Sign me up!" type="submit">
-	</form>
-	<p><a th:href="@{/login}">Back to login</a></p>
-</div>
+		<p class="auth-footer">Already have an account? <a th:href="@{/login}">Log in</a></p>
+	</div>
+</main>
 
 <script th:inline="javascript">
 	const checkUrl = /*[[@{/register/username-check}]]*/ '/register/username-check';
 	const usernameInput = document.getElementById('username');
 	const status = document.getElementById('username-status');
-	usernameInput.addEventListener('input', async () => {
+	let pending;
+	usernameInput.addEventListener('input', () => {
+		clearTimeout(pending);
 		const username = usernameInput.value.trim();
 		if (!username) {
 			status.innerHTML = '';
 			return;
 		}
-		const response = await fetch(checkUrl + '?username=' + encodeURIComponent(username));
-		status.innerHTML = await response.text();
+		pending = setTimeout(async () => {
+			const response = await fetch(checkUrl + '?username=' + encodeURIComponent(username));
+			status.innerHTML = await response.text();
+		}, 250);
 	});
 </script>
 </body>

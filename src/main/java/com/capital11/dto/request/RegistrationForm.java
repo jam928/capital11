@@ -1,4 +1,4 @@
-package com.capital11.web;
+package com.capital11.dto.request;
 
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;

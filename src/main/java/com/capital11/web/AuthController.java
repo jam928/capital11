@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.capital11.domain.AccountType;
+import com.capital11.dto.request.RegistrationForm;
 import com.capital11.domain.Customer;
+import com.capital11.mapper.DtoMapper;
 import com.capital11.service.BankException;
 import com.capital11.service.BankService;
 
@@ -24,9 +26,11 @@ import com.capital11.service.BankService;
 public class AuthController {
 
     private final BankService bankService;
+    private final DtoMapper mapper;
 
-    public AuthController(BankService bankService) {
+    public AuthController(BankService bankService, DtoMapper mapper) {
         this.bankService = bankService;
+        this.mapper = mapper;
     }
 
     @GetMapping("/")
@@ -72,8 +76,7 @@ public class AuthController {
             return "register";
         }
         try {
-            bankService.register(form.getName(), form.getEmail(), form.getUsername(), form.getPassword(),
-                    form.birthday(), form.getGender(), form.getAccountType());
+            bankService.register(mapper.toCustomer(form), form.getAccountType());
         } catch (BankException e) {
             result.rejectValue("username", "taken", e.getMessage());
             return "register";

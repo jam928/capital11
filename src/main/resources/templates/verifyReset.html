@@ -1,37 +1,31 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-	<title>Enter Username</title>
-	<link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
-	<link type="text/css" rel="stylesheet" th:href="@{/css/verifyReset.css}">
-</head>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head('Reset password')}"></head>
 <body>
+<div class="auth-theme"><button th:replace="~{fragments :: themeToggle}"></button></div>
+<main class="auth">
+	<div class="auth-card">
+		<a th:replace="~{fragments :: brand}"></a>
 
-	<div th:replace="~{fragments :: header}"></div>
+		<section class="card">
+			<div class="card-header">
+				<h1>Reset your password</h1>
+				<p class="muted">Enter your username to continue.</p>
+			</div>
 
-	<div id="container">
-		<h3>Reset Password</h3>
+			<th:block th:replace="~{fragments :: alerts}"></th:block>
 
-		<th:block th:replace="~{fragments :: alerts}"></th:block>
+			<form class="form" th:action="@{/forgot-password}" method="post">
+				<div class="field">
+					<label for="username">Username</label>
+					<input type="text" id="username" name="username" autocomplete="username" required autofocus>
+				</div>
+				<button type="submit" class="btn btn-block">Continue</button>
+			</form>
+		</section>
 
-		<form th:action="@{/forgot-password}" method="post">
-			<table>
-				<tbody>
-					<tr>
-						<td><label for="username">Username: </label></td>
-						<td><input type="text" id="username" name="username" required autofocus></td>
-					</tr>
-					<tr>
-						<td><label></label></td>
-						<td><input type="submit" value="Verify" class="verify"></td>
-					</tr>
-				</tbody>
-			</table>
-		</form>
-
-		<p>
-			<a th:href="@{/login}">Back to the Login page</a>
-		</p>
+		<p class="auth-footer"><a th:href="@{/login}">Back to log in</a></p>
 	</div>
+</main>
 </body>
 </html>

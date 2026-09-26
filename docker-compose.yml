@@ -17,7 +17,7 @@ services:
       timeout: 5s
       retries: 20
 
-  # Behind a profile so ./mvnw spring-boot:run (which starts this file) only brings up mysql.
+  # Behind a profile so docker compose up only brings up mysql.
   # Run the whole stack with: docker compose --profile app up
   app:
     profiles: [app]
@@ -25,8 +25,6 @@ services:
     working_dir: /workspace
     command: mvn spring-boot:run
     environment:
-      # Compose support would try to run docker compose from inside this container.
-      SPRING_DOCKER_COMPOSE_ENABLED: "false"
       DB_URL: jdbc:mysql://mysql:3306/capital_11
       DB_USERNAME: capital11
       DB_PASSWORD: capital11
@@ -41,7 +39,30 @@ services:
       mysql:
         condition: service_healthy
 
+  # Runs the unit and integration tests (mvn verify) in a Maven container and prints a coverage summary.
+  # Run with: docker compose run --rm tests
+  # The integration tests start their own MySQL through Testcontainers, so this service talks to the
+  # host's Docker daemon instead of using the mysql service above.
+  tests:
+    profiles: [test]
+    image: maven:3.9-eclipse-temurin-21
+    working_dir: /workspace
+    command: sh docker/tests/verify.sh
+    environment:
+      # Testcontainers publishes MySQL on the host, so reach it through the host rather than this container.
+      TESTCONTAINERS_HOST_OVERRIDE: host.docker.internal
+    extra_hosts:
+      # Docker Desktop defines host.docker.internal already; this adds it on Linux.
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - .:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Separate from app-target so tests can run while the app is up.
+      - test-target:/workspace/target
+      - maven-repo:/root/.m2
+
 volumes:
   mysql-data:
   app-target:
+  test-target:
   maven-repo:

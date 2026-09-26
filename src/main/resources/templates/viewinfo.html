@@ -1,24 +1,37 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-	<title>Account Info</title>
-	<link type="text/css" rel="stylesheet" th:href="@{/css/main.css}">
-</head>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="~{fragments :: head('Profile')}"></head>
 <body>
+<header th:replace="~{fragments :: nav('profile')}"></header>
 
-	<div th:replace="~{fragments :: header}"></div>
+<main class="page page-narrow">
+	<section class="card">
+		<div class="card-header">
+			<h1>Your profile</h1>
+			<p class="muted">Your personal details.</p>
+		</div>
 
-	<br><br>
-	Name: <span th:text="${customer.name}"></span><br><br>
-	Email: <span th:text="${customer.email}"></span><br><br>
-	Username: <span th:text="${customer.username}"></span><br><br>
-	Birthday: <span th:text="${customer.birthday}"></span><br><br>
-	Gender: <span th:text="${customer.gender}"></span><br><br>
+		<dl class="details">
+			<div><dt>Name</dt><dd th:text="${customer.name}">Name</dd></div>
+			<div><dt>Email</dt><dd th:text="${customer.email}">email</dd></div>
+			<div><dt>Username</dt><dd th:text="${customer.username}">username</dd></div>
+			<div><dt>Birthday</dt><dd th:text="${customer.birthday}">1/1/2000</dd></div>
+			<div>
+				<dt>Gender</dt>
+				<dd th:switch="${customer.gender}">
+					<span th:case="'m'">Male</span>
+					<span th:case="'f'">Female</span>
+					<span th:case="'others'">Other</span>
+					<span th:case="*" th:text="${customer.gender}"></span>
+				</dd>
+			</div>
+		</dl>
 
-	<p>
-		<a th:href="@{/profile/edit}">Update Info</a>
-		<br>
-		<a th:href="@{/main}">Back to the Main Page</a>
-	</p>
+		<div class="actions">
+			<a class="btn" th:href="@{/profile/edit}">Edit profile</a>
+			<a class="btn btn-secondary" th:href="@{/main}">Back to dashboard</a>
+		</div>
+	</section>
+</main>
 </body>
 </html>

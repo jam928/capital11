@@ -2,14 +2,7 @@ spring:
   application:
     name: capital11
 
-  # When run from the project root (e.g. ./mvnw spring-boot:run), spring-boot-docker-compose
-  # starts docker-compose.yml and points the datasource at the mysql service, overriding the
-  # values below. They are the fallback when compose support is off (e.g. a packaged jar).
-  docker:
-    compose:
-      file: compose.yaml
-      lifecycle-management: start-only
-
+  # Defaults match the mysql service in docker-compose.yml.
   datasource:
     url: ${DB_URL:jdbc:mysql://localhost:3306/capital_11}
     username: ${DB_USERNAME:capital11}

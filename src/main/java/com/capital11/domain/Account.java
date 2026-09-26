@@ -14,11 +14,21 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "account")
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Account {
 
     @Id
@@ -36,33 +46,6 @@ public class Account {
     private Customer customer;
 
     @Column(name = "balance", nullable = false, precision = 15, scale = 2)
+    @Builder.Default
     private BigDecimal balance = BigDecimal.ZERO;
-
-    protected Account() {
-    }
-
-    public Account(AccountType acctType, Customer customer) {
-        this.acctType = acctType;
-        this.customer = customer;
-    }
-
-    public Integer getAcctNum() {
-        return acctNum;
-    }
-
-    public AccountType getAcctType() {
-        return acctType;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
-    }
 }

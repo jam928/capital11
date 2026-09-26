@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.capital11.api.ApiDtos.CustomerResponse;
-import com.capital11.api.ApiDtos.LoginRequest;
-import com.capital11.api.ApiDtos.RegisterRequest;
-import com.capital11.api.ApiDtos.UsernameAvailability;
+import com.capital11.mapper.DtoMapper;
+import com.capital11.dto.request.LoginRequest;
+import com.capital11.dto.request.RegisterRequest;
+import com.capital11.dto.response.CustomerResponse;
+import com.capital11.dto.response.UsernameAvailabilityResponse;
 import com.capital11.service.BankService;
 import com.capital11.web.SessionKeys;
 
@@ -31,9 +32,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class AuthApiController {
 
     private final BankService bankService;
+    private final DtoMapper mapper;
 
-    public AuthApiController(BankService bankService) {
+    public AuthApiController(BankService bankService, DtoMapper mapper) {
         this.bankService = bankService;
+        this.mapper = mapper;
     }
 
     @PostMapping("/session")
@@ -44,7 +47,7 @@ public class AuthApiController {
         return bankService.authenticate(request.username(), request.password())
                 .map(customer -> {
                     session.setAttribute(SessionKeys.CUSTOMER_ID, customer.getCid());
-                    return ResponseEntity.ok(CustomerResponse.of(customer));
+                    return ResponseEntity.ok(mapper.toResponse(customer));
                 })
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
@@ -61,13 +64,12 @@ public class AuthApiController {
     @Operation(summary = "Register", description = "Creates a customer and their account. Does not log in.")
     @ApiResponse(responseCode = "400", description = "Invalid request or username taken")
     public CustomerResponse register(@Valid @RequestBody RegisterRequest request) {
-        return CustomerResponse.of(bankService.register(request.name(), request.email(), request.username(),
-                request.password(), request.legacyBirthday(), request.gender(), request.accountType()));
+        return mapper.toResponse(bankService.register(mapper.toCustomer(request), request.accountType()));
     }
 
     @GetMapping("/customers/username-availability")
     @Operation(summary = "Check whether a username is free")
-    public UsernameAvailability usernameAvailability(@RequestParam String username) {
-        return new UsernameAvailability(username, bankService.isUsernameAvailable(username));
+    public UsernameAvailabilityResponse usernameAvailability(@RequestParam String username) {
+        return new UsernameAvailabilityResponse(username, bankService.isUsernameAvailable(username));
     }
 }
